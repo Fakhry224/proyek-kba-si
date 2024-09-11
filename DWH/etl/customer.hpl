@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>customer</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit>100</transform_performance_capturing_size_limit>
+    <created_user>-</created_user>
+    <created_date>2024/05/10 21:07:33.904</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2024/05/10 21:07:33.904</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Customer Table</from>
+      <to>Concat Name</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Concat Name</from>
+      <to>Customer with Full Name</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Customer with Full Name</from>
+      <to>Customer with Address Id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Customer Address Table</from>
+      <to>Customer with Address Id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Address Table</from>
+      <to>Address with Country</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Country Table</from>
+      <to>Address with Country</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Address with Country</from>
+      <to>Customer with Address</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Customer with Address Id</from>
+      <to>Customer with Address</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Customer with Address</from>
+      <to>Customer Dimension</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Customer Dimension</from>
+      <to>Export Data</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Address Table</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Gravity Books DB</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT
+  address_id
+, street_number
+, street_name
+, city
+, country_id
+FROM gravity_books.address
+</sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>48</xloc>
+      <yloc>272</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Address with Country</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <from>Country Table</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>country_id</name>
+        <field>country_id</field>
+      </key>
+      <value>
+        <name>country_name</name>
+        <rename>country_name</rename>
+        <default/>
+        <type>String</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>208</xloc>
+      <yloc>320</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Concat Name</name>
+    <type>ConcatFields</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <ConcatFields>
+      <removeSelectedFields>N</removeSelectedFields>
+      <targetFieldLength>0</targetFieldLength>
+      <targetFieldName>name</targetFieldName>
+    </ConcatFields>
+    <enclosure>"</enclosure>
+    <fields>
+      <field>
+        <length>200</length>
+        <name>first_name</name>
+        <precision>-1</precision>
+        <type>String</type>
+      </field>
+      <field>
+        <length>200</length>
+        <name>last_name</name>
+        <precision>-1</precision>
+        <type>String</type>
+      </field>
+    </fields>
+    <separator> </separator>
+    <attributes/>
+    <GUI>
+      <xloc>224</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Country Table</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Gravity Books DB</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT
+  country_id
+, country_name
+FROM gravity_books.country
+</sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>48</xloc>
+      <yloc>352</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Customer Address Table</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Gravity Books DB</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT
+  customer_id
+, address_id
+, status_id
+FROM gravity_books.customer_address
+</sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>224</xloc>
+      <yloc>192</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Customer Dimension</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>customer_id</name>
+      </field>
+      <field>
+        <name>name</name>
+      </field>
+      <field>
+        <name>country_name</name>
+        <rename>country</rename>
+      </field>
+      <field>
+        <name>city</name>
+      </field>
+      <field>
+        <name>street_name</name>
+      </field>
+      <field>
+        <name>street_number</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>560</xloc>
+      <yloc>320</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Customer Table</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Gravity Books DB</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT
+  customer_id
+, first_name
+, last_name
+FROM gravity_books.customer
+</sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>48</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Customer with Address</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <from>Address with Country</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>address_id</name>
+        <field>address_id</field>
+      </key>
+      <value>
+        <name>country_name</name>
+        <rename>country_name</rename>
+        <default/>
+        <type>String</type>
+      </value>
+      <value>
+        <name>city</name>
+        <rename>city</rename>
+        <default/>
+        <type>String</type>
+      </value>
+      <value>
+        <name>street_name</name>
+        <rename>street_name</rename>
+        <default/>
+        <type>String</type>
+      </value>
+      <value>
+        <name>street_number</name>
+        <rename>street_number</rename>
+        <default/>
+        <type>String</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>400</xloc>
+      <yloc>320</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Customer with Address Id</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <from>Customer with Full Name</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>customer_id</name>
+        <field>customer_id</field>
+      </key>
+      <value>
+        <name>name</name>
+        <rename>name</rename>
+        <default/>
+        <type>String</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>400</xloc>
+      <yloc>192</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Customer with Full Name</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>customer_id</name>
+      </field>
+      <field>
+        <name>name</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>400</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Export Data</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>100</commit>
+    <connection>Gravity Books Data Warehouse</connection>
+    <lookup>
+      <key>
+        <condition>=</condition>
+        <field>customer_id</field>
+        <name>customer_id</name>
+        <name2/>
+      </key>
+      <key>
+        <condition>=</condition>
+        <field>street_name</field>
+        <name>street_name</name>
+        <name2/>
+      </key>
+      <key>
+        <condition>=</condition>
+        <field>street_number</field>
+        <name>street_number</name>
+        <name2/>
+      </key>
+      <schema>gravity_books_dwh</schema>
+      <table>customer</table>
+      <value>
+        <name>customer_id</name>
+        <rename>customer_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>name</name>
+        <rename>name</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>country</name>
+        <rename>country</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>city</name>
+        <rename>city</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>street_name</name>
+        <rename>street_name</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>street_number</name>
+        <rename>street_number</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+    <update_bypassed>Y</update_bypassed>
+    <attributes/>
+    <GUI>
+      <xloc>720</xloc>
+      <yloc>320</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

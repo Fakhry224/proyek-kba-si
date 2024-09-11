@@ -1,0 +1,11 @@
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/03_mysql_populate_publisher.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/04_mysql_populate_lookups.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/05_mysql_populate_book.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/06_mysql_populate_bookauthor.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/07_mysql_populate_country.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/08_mysql_populate_address.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/09_mysql_populate_customer.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/10_mysql_populate_others.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/11_mysql_populate_order.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/12_mysql_populate_orderline.sql
+https://github.com/bbrumm/databasestar/blob/main/sample_databases/sample_db_gravity/mysql/13_mysql_populate_orderhistory.sql

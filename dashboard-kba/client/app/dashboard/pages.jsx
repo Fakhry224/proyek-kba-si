@@ -3,9 +3,13 @@
 import { useEffect, useState } from "react";
 import Navbar from "../(component)/NavBar";
 import axios from "axios";
+import CardAnnualCountry from "./CardAnnualCountry";
+import CardMonthlySales from "./CardMonthlySales";
+import CardAnnualSales from "./CardAnnualSales";
+import CardShippingMethodSales from "./CardShippingMethodSales";
 
 const Dashboard = () => {
-  const [dashboardData, setDashboardData] = useState([]);
+  const [dashboardData, setDashboardData] = useState(null);
 
   const fetchDashboardData = async () => {
     try {
@@ -26,36 +30,25 @@ const Dashboard = () => {
     return <div>Loading...</div>;
   }
 
+  console.log(dashboardData);
+
   return (
     <div className="flex text-text w-full min-h-screen">
       <main className="flex flex-col w-full h-full px-9">
         <Navbar />
-        <h1 className="font-bold text-[4rem] ml-10 my-10 text-center">
-          Dashboard Analytics
-        </h1>
-        <div>
-          {/* Contoh Implementasi Data */}
-          <h2>Annual Sales</h2>
-          {dashboardData.annualSalesRaw &&
-          dashboardData.annualSalesRaw.length > 0 ? (
-            <ul>
-              {dashboardData.annualSalesRaw.map((item, index) => (
-                <li key={index}>
-                  Year: {item.year}, Total Revenue: {item.total_revenue}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No data available</p>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mx-10 my-10">
+          <CardAnnualSales data={dashboardData.annualSalesRaw || []} />
+          <CardMonthlySales data={dashboardData.monthlySalesRaw || []} />
+          <CardShippingMethodSales
+            data={dashboardData.shippingMethodSalesRaw || []}
+          />
+          <CardAnnualCountry data={dashboardData.countrySalesRaw || []} />
         </div>
-        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mx-10 my-10">
+        {/* <div className="bg-card h-[30rem] shadow-md rounded-2xl" />
+          <div className="bg-card h-[30rem] shadow-md rounded-2xl" /> */}
+        {/* <div className="bg-card h-[30rem] shadow-md rounded-2xl" />
           <div className="bg-card h-[30rem] shadow-md rounded-2xl" />
-          <div className="bg-card h-[30rem] shadow-md rounded-2xl" />
-          <div className="bg-card h-[30rem] shadow-md rounded-2xl" />
-          <div className="bg-card h-[30rem] shadow-md rounded-2xl" />
-          <div className="bg-card h-[30rem] col-span-2 shadow-md rounded-2xl" />
-        </div> */}
+          <div className="bg-card h-[30rem] col-span-2 shadow-md rounded-2xl" /> */}
       </main>
     </div>
   );

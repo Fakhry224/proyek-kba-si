@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model book {
+  book_id          Int                @id
+  book_sk          BigInt             @unique(map: "book_sk") @default(autoincrement()) @db.UnsignedBigInt
+  title            String?            @db.VarChar(500)
+  author           String?            @db.VarChar(1000)
+  publisher        String?            @db.VarChar(500)
+  language         String?            @db.VarChar(100)
+  publication_date DateTime?          @db.Date
+  pages            Int?
+  book_sales_facts book_sales_facts[]
+}
+
+model book_sales_facts {
+  book_sales_facts_id BigInt           @id @unique(map: "book_sales_facts_id") @default(autoincrement()) @db.UnsignedBigInt
+  time_sk             BigInt?          @db.UnsignedBigInt
+  customer_sk         BigInt?          @db.UnsignedBigInt
+  method_sk           BigInt?          @db.UnsignedBigInt
+  book_sk             BigInt?          @db.UnsignedBigInt
+  revenue_book_sales  Decimal?         @db.Decimal(10, 2)
+  book                book?            @relation(fields: [book_sk], references: [book_sk], onDelete: NoAction, onUpdate: NoAction, map: "book_fk")
+  customer            customer?        @relation(fields: [customer_sk], references: [customer_sk], onDelete: NoAction, onUpdate: NoAction, map: "customer_fk")
+  shipping_method     shipping_method? @relation(fields: [method_sk], references: [method_sk], onDelete: NoAction, onUpdate: NoAction, map: "method_fk")
+  time                time?            @relation(fields: [time_sk], references: [time_sk], onDelete: NoAction, onUpdate: NoAction, map: "time_fk")
+
+  @@index([book_sk], map: "book_fk")
+  @@index([customer_sk], map: "customer_fk")
+  @@index([method_sk], map: "method_fk")
+  @@index([time_sk], map: "time_fk")
+}
+
+model customer {
+  customer_id      Int
+  customer_sk      BigInt             @unique(map: "customer_sk") @default(autoincrement()) @db.UnsignedBigInt
+  name             String?            @db.VarChar(1000)
+  country          String?            @db.VarChar(100)
+  city             String?            @db.VarChar(100)
+  street_name      String             @db.VarChar(500)
+  street_number    String             @db.VarChar(100)
+  book_sales_facts book_sales_facts[]
+
+  @@id([customer_id, street_name, street_number])
+}
+
+model shipping_method {
+  method_id        Int                @id
+  method_sk        BigInt             @unique(map: "method_sk") @default(autoincrement()) @db.UnsignedBigInt
+  method_name      String?            @db.VarChar(100)
+  cost             Decimal?           @db.Decimal(10, 2)
+  book_sales_facts book_sales_facts[]
+}
+
+model time {
+  time_sk          BigInt             @id @unique(map: "time_sk") @default(autoincrement()) @db.UnsignedBigInt
+  year             Int?
+  month            Int?
+  day              Int?
+  book_sales_facts book_sales_facts[]
+}

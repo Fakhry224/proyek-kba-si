@@ -7,6 +7,7 @@ import CardAnnualCountry from "./CardAnnualCountry";
 import CardMonthlySales from "./CardMonthlySales";
 import CardAnnualSales from "./CardAnnualSales";
 import CardShippingMethodSales from "./CardShippingMethodSales";
+import CardAnnualBooks from "./CardAnnualBooks";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -15,7 +16,7 @@ const Dashboard = () => {
     try {
       await axios.get("http://localhost:8000/dashboard").then((response) => {
         setDashboardData(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       });
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
@@ -30,7 +31,7 @@ const Dashboard = () => {
     return <div>Loading...</div>;
   }
 
-  console.log(dashboardData);
+  // console.log(dashboardData);
 
   return (
     <div className="flex text-text w-full min-h-screen">
@@ -42,6 +43,7 @@ const Dashboard = () => {
           <CardShippingMethodSales
             data={dashboardData.shippingMethodSalesRaw || []}
           />
+          <CardAnnualBooks data={dashboardData.annualBooks || []} /> 
           <CardAnnualCountry data={dashboardData.countrySalesRaw || []} />
         </div>
         {/* <div className="bg-card h-[30rem] shadow-md rounded-2xl" />

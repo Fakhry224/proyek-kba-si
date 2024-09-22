@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { monthNames } from "../lib/lib.js";
 import {
   LineChart,
   Line,
@@ -10,31 +11,12 @@ import {
   Legend,
 } from "recharts";
 
-// Helper function to map month numbers to names
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-// Function to prepare data in desired format
 const prepareChartData = (monthlySalesRaw) => {
   const chartData = [];
 
-  // Loop through all months (1-12)
   for (let month = 1; month <= 12; month++) {
     const monthData = { month: monthNames[month - 1] };
 
-    // Find sales data for each year in the current month
     monthlySalesRaw.forEach((item) => {
       if (item.month === month) {
         monthData[`year_${item.year}`] = parseFloat(item.total_revenue);
@@ -58,13 +40,14 @@ const CardMonthlySales = ({ data }) => {
   }, [data]);
 
   return (
-    <div className="bg-card h-[30rem] shadow-md rounded-2xl p-4">
+    <div className="bg-card w-full shadow-md rounded-2xl p-4 h-[35rem]">
+      <h1 className="text-text text-center font-bold text-[1.5rem] lg:text-[2rem] pt-2">
+        Pendapatan Bulanan
+      </h1>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
-          width={500}
-          height={300}
           data={chartData}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 20, right: 30, left: 20, bottom: 15 }}
         >
           <XAxis dataKey="month" />
           <YAxis />
@@ -72,7 +55,6 @@ const CardMonthlySales = ({ data }) => {
           <Legend />
           <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
 
-          {/* Lines for each year */}
           <Line
             type="monotone"
             dataKey="year_2021"

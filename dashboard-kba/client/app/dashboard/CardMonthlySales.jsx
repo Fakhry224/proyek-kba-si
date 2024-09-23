@@ -49,6 +49,8 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
 
+    console.log(data);
+
     return (
       <div
         className="custom-tooltip"

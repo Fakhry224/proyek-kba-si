@@ -75,7 +75,7 @@ export const monthlySalesAnalyze = (data) => {
           color: getColor(percentageChange2023),
         },
         percentageChange2024: {
-          value: percentageChange2024.toFixed(2),
+          value: percentageChange2024?.toFixed(2),
           color: getColor(percentageChange2024),
         },
       },
@@ -161,11 +161,16 @@ export const annualBooksAnalyze = (data) => {
     let category = "#00b83a";
     let percentageChange = 0;
 
-    if (i > 0) {
-      const currentYear = data[i].total_books_sold;
-      const previousYear = data[i - 1].total_books_sold;
+    const currentSold = Number(data[i]?.total_books_sold) || 0;
 
-      percentageChange = ((currentYear - previousYear) / previousYear) * 100;
+    if (i > 1) {
+      const previousSold1 = Number(data[i - 1]?.total_books_sold) || 0;
+      const previousSold2 = Number(data[i - 2]?.total_books_sold) || 0;
+
+      const averagePreviousSold = (previousSold1 + previousSold2) / 2;
+
+      percentageChange =
+        ((currentSold - averagePreviousSold) / averagePreviousSold) * 100;
 
       if (percentageChange < 3) {
         category = "#B8001F";

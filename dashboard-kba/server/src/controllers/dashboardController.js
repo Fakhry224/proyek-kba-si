@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient({
-    log: ["query", "info", "warn", "error"],
+  log: ["query", "info", "warn", "error"],
 });
 
-export const getDashboardMetrics = async(req, res) => {
-    try {
-        const annualBooksRaw = await prisma.$queryRaw `
+export const getDashboardMetrics = async (req, res) => {
+  try {
+    const annualBooksRaw = await prisma.$queryRaw`
             SELECT t.year, COUNT(bsf.book_sk) AS total_books_sold
             FROM book_sales_facts bsf
             JOIN time t ON bsf.time_sk = t.time_sk
@@ -14,12 +14,12 @@ export const getDashboardMetrics = async(req, res) => {
             ORDER BY t.year;
         `;
 
-        const annualBooks = annualBooksRaw.map((row) => ({
-            year: row.year,  // Assuming year is an integer
-            total_books_sold: row.total_books_sold.toString(),  // Convert BigInt to string
-          })); 
+    const annualBooks = annualBooksRaw.map((row) => ({
+      year: row.year,
+      total_books_sold: row.total_books_sold.toString(),
+    }));
 
-        const annualSalesRaw = await prisma.$queryRaw `
+    const annualSalesRaw = await prisma.$queryRaw`
         SELECT t.year, SUM(bsf.revenue_book_sales) AS total_revenue
         FROM book_sales_facts bsf
         JOIN time t ON bsf.time_sk = t.time_sk
@@ -27,7 +27,7 @@ export const getDashboardMetrics = async(req, res) => {
         ORDER BY t.year;
     `;
 
-        const monthlySalesRaw = await prisma.$queryRaw `
+    const monthlySalesRaw = await prisma.$queryRaw`
         SELECT t.year, t.month, SUM(bsf.revenue_book_sales) AS total_revenue
         FROM book_sales_facts bsf
         JOIN time t ON bsf.time_sk = t.time_sk
@@ -35,7 +35,7 @@ export const getDashboardMetrics = async(req, res) => {
         ORDER BY t.year, t.month;
     `;
 
-        const shippingMethodSalesRaw = await prisma.$queryRaw `
+    const shippingMethodSalesRaw = await prisma.$queryRaw`
         SELECT t.year, t.month, sm.method_name, SUM(bsf.revenue_book_sales) AS total_revenue
         FROM book_sales_facts bsf
         JOIN time t ON bsf.time_sk = t.time_sk
@@ -44,7 +44,7 @@ export const getDashboardMetrics = async(req, res) => {
         ORDER BY t.year, t.month, sm.method_name;
     `;
 
-        const countrySalesRaw = await prisma.$queryRaw `
+    const countrySalesRaw = await prisma.$queryRaw`
         SELECT t.year, c.country, SUM(bsf.revenue_book_sales) AS total_revenue
         FROM book_sales_facts bsf
         JOIN time t ON bsf.time_sk = t.time_sk
@@ -53,24 +53,15 @@ export const getDashboardMetrics = async(req, res) => {
         ORDER BY t.year, c.country
     `;
 
-        // const tess = await prisma.book.findMany({
-        //   take: 5,
-        // });
-
-        // const tesRaw = tess.map((tes) => ({
-        //   ...tes,
-        //   book_sk: tes.book_sk.toString(),
-        // }));
-
-        res.json({
-            annualBooks,
-            annualSalesRaw,
-            monthlySalesRaw,
-            shippingMethodSalesRaw,
-            countrySalesRaw,
-        });
-    } catch (error) {
-        console.error("Error: ", error)
-        res.status(500).json({ message: "Error retrieving dashboard metrics" });
-    }
+    res.json({
+      annualBooks,
+      annualSalesRaw,
+      monthlySalesRaw,
+      shippingMethodSalesRaw,
+      countrySalesRaw,
+    });
+  } catch (error) {
+    console.error("Error: ", error);
+    res.status(500).json({ message: "Error retrieving dashboard metrics" });
+  }
 };

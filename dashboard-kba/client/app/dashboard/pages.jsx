@@ -35,14 +35,14 @@ const Dashboard = () => {
     <div className="flex text-primary w-full min-h-screen flex-col">
       <Navbar />
       <main className="w-full h-full px-9">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mx-10 my-10">
-          <CardAnnualSales data={dashboardData.annualSalesRaw || []} />
-          <CardMonthlySales data={dashboardData.monthlySalesRaw || []} />
+        <div className="md:grid md:grid-cols-2 lg:grid-cols-3 gap-10 ">
+          <CardAnnualSales data={dashboardData.annualSalesRaw} />
+          <CardMonthlySales data={dashboardData.monthlySalesRaw} />
           <CardShippingMethodSales
-            data={dashboardData.shippingMethodSalesRaw || []}
+            data={dashboardData.shippingMethodSalesRaw}
           />
-          <CardAnnualBooks data={dashboardData.annualBooks || []} />
-          <CardAnnualCountry data={dashboardData.countrySalesRaw || []} />
+          <CardAnnualBooks data={dashboardData.annualBooks} />
+          <CardAnnualCountry data={dashboardData.countrySalesRaw} />
         </div>
       </main>
     </div>

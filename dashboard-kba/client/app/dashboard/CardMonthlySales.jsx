@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { monthlySalesAnalyze } from "../lib/lib.js";
 import { monthNames } from "../lib/lib.js";
 import {
   LineChart,
@@ -11,7 +12,7 @@ import {
   Legend,
 } from "recharts";
 
-const prepareChartData = (monthlySalesRaw) => {
+const prepareChartData = (monthlySalesRaw, analyzedData) => {
   const chartData = [];
 
   for (let month = 1; month <= 12; month++) {
@@ -23,36 +24,98 @@ const prepareChartData = (monthlySalesRaw) => {
       }
     });
 
+    const analyzedMonth = analyzedData.find(
+      (data) => data[monthNames[month - 1]]
+    );
+    if (analyzedMonth) {
+      const monthKey = monthNames[month - 1];
+      monthData[`percentageChange2021`] =
+        analyzedMonth[monthKey].percentageChange2021;
+      monthData[`percentageChange2022`] =
+        analyzedMonth[monthKey].percentageChange2022;
+      monthData[`percentageChange2023`] =
+        analyzedMonth[monthKey].percentageChange2023;
+      monthData[`percentageChange2024`] =
+        analyzedMonth[monthKey].percentageChange2024;
+    }
+
     chartData.push(monthData);
   }
 
   return chartData;
 };
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+
+    return (
+      <div
+        className="custom-tooltip"
+        style={{
+          backgroundColor: "#fff",
+          padding: "10px",
+          border: "1px solid #ccc",
+        }}
+      >
+        <p
+          className="label font-bold text-center text-[1rem]"
+          style={{ color: "#000" }}
+        >{`Month: ${label}`}</p>
+        <br />
+        {payload.map((item) => (
+          <p key={item.name} style={{ color: item.stroke }}>
+            {`${item.name}: $${item.value.toFixed(2)} `}
+          </p>
+        ))}
+        <br />
+        <p
+          style={{ color: data.percentageChange2021.color }}
+        >{`Percentage Change 2021: ${data.percentageChange2021.value}%`}</p>
+        <p
+          style={{ color: data.percentageChange2022.color }}
+        >{`Percentage Change 2022: ${data.percentageChange2022.value}%`}</p>
+        <p
+          style={{ color: data.percentageChange2023.color }}
+        >{`Percentage Change 2023: ${data.percentageChange2023.value}%`}</p>
+        <p
+          style={{ color: data.percentageChange2024.color }}
+        >{`Percentage Change 2024: ${data.percentageChange2024.value}%`}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
 const CardMonthlySales = ({ data }) => {
   const [chartData, setChartData] = useState([]);
+  const analyzedData = monthlySalesAnalyze(data);
 
   useEffect(() => {
-    if (data) {
-      const processedData = prepareChartData(data);
+    if (data && analyzedData) {
+      const processedData = prepareChartData(data, analyzedData);
       setChartData(processedData);
     }
-  }, [data]);
+  }, [data, analyzedData]);
 
   return (
-    <div className="bg-card w-full shadow-md rounded-2xl p-4 h-[35rem]">
+    <div className="bg-card w-full shadow-md rounded-2xl p-4 h-[35rem] mt-10">
       <h1 className="text-text text-center font-bold text-[1.5rem] lg:text-[2rem] pt-2">
         Pendapatan Bulanan
       </h1>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={chartData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 15 }}
+          margin={{ top: 90, right: 30, left: 10, bottom: 15 }}
         >
           <XAxis dataKey="month" />
           <YAxis />
-          <Tooltip />
-          <Legend />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend
+            wrapperStyle={{
+              marginLeft: "20px",
+            }}
+          />
           <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
 
           <Line

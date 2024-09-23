@@ -28,8 +28,65 @@ export const asianCountries = [
   "Vietnam",
 ];
 
+export const monthlySalesAnalyze = (data) => {
+  const groupedData = data.reduce((acc, item) => {
+    const monthName = monthNames[item.month - 1];
+    if (!acc[monthName]) {
+      acc[monthName] = {};
+    }
+
+    acc[monthName][item.year] = parseFloat(item.total_revenue);
+
+    return acc;
+  }, {});
+
+  const getColor = (percentage) => {
+    if (percentage > 10) return "#00b83a";
+    if (percentage >= 3 && percentage <= 10) return "#b8b500";
+    return "#B8001F";
+  };
+
+  const analyzedData = monthNames.map((month) => {
+    const monthlyData = groupedData[month] || {};
+
+    const percentageChange2021 = 0;
+    const percentageChange2022 = monthlyData[2021]
+      ? ((monthlyData[2022] - monthlyData[2021]) / monthlyData[2021]) * 100
+      : 0;
+    const percentageChange2023 = monthlyData[2022]
+      ? ((monthlyData[2023] - monthlyData[2022]) / monthlyData[2022]) * 100
+      : 0;
+    const percentageChange2024 = monthlyData[2023]
+      ? ((monthlyData[2024] - monthlyData[2023]) / monthlyData[2023]) * 100
+      : 0;
+
+    return {
+      [month]: {
+        percentageChange2021: {
+          value: percentageChange2021.toFixed(2),
+          color: getColor(percentageChange2021),
+        },
+        percentageChange2022: {
+          value: percentageChange2022.toFixed(2),
+          color: getColor(percentageChange2022),
+        },
+        percentageChange2023: {
+          value: percentageChange2023.toFixed(2),
+          color: getColor(percentageChange2023),
+        },
+        percentageChange2024: {
+          value: percentageChange2024.toFixed(2),
+          color: getColor(percentageChange2024),
+        },
+      },
+    };
+  });
+
+  return analyzedData;
+};
+
 export const annualSalesAnalyze = (data) => {
-  const analysis = [];
+  const analyzedData = [];
 
   for (let i = 0; i < data.length; i++) {
     let category = "#00b83a";
@@ -50,7 +107,7 @@ export const annualSalesAnalyze = (data) => {
       }
     }
 
-    analysis.push({
+    analyzedData.push({
       year: data[i].year,
       total_revenue: data[i].total_revenue,
       percentageChange: percentageChange.toFixed(2),
@@ -58,7 +115,7 @@ export const annualSalesAnalyze = (data) => {
     });
   }
 
-  return analysis;
+  return analyzedData;
 };
 
 export const shippingMethodSalesAnalyze = (data) => {
@@ -78,6 +135,7 @@ export const shippingMethodSalesAnalyze = (data) => {
     const currAvg = data[i].Express.averageQuartal;
 
     const change = ((currAvg - prevAvg) / prevAvg) * 100;
+
     if (change < 3) {
       category = "#B8001F";
     } else if (change >= 3 && change <= 10) {
@@ -93,13 +151,11 @@ export const shippingMethodSalesAnalyze = (data) => {
   data[0].Express.percentageChange = 0;
   data[0].Express.category = "#00b83a";
 
-  console.log(data);
-
   return data;
 };
 
 export const annualBooksAnalyze = (data) => {
-  const analysis = [];
+  const analyzedData = [];
 
   for (let i = 0; i < data.length; i++) {
     let category = "#00b83a";
@@ -120,18 +176,18 @@ export const annualBooksAnalyze = (data) => {
       }
     }
 
-    analysis.push({
+    analyzedData.push({
       year: data[i].year,
       total_books_sold: data[i].total_books_sold,
       percentageChange: percentageChange.toFixed(2),
       category: category,
     });
   }
-  return analysis;
+  return analyzedData;
 };
 
 export const annualCountryAnalyze = (data) => {
-  const analysis = [];
+  const analyzedData = [];
 
   asianCountries.map((item) => {
     const filteredData = data.filter((entry) => entry.country === item);
@@ -164,15 +220,15 @@ export const annualCountryAnalyze = (data) => {
         }
       }
 
-      analysis.push({
+      analyzedData.push({
         year: filteredData[i].year,
         country: filteredData[i].country,
         total_revenue: currentRevenue,
-        percentageChange: i <= 1 ? 0 : percentageChange.toFixed(2), // Default to 0 for the first two years
+        percentageChange: i <= 1 ? 0 : percentageChange.toFixed(2),
         category: i <= 1 ? "#00b83a" : category,
       });
     }
   });
 
-  return analysis;
+  return analyzedData;
 };

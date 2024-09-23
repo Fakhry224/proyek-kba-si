@@ -14,6 +14,44 @@ import {
   Legend,
 } from "recharts";
 
+const CustomTooltip = ({ active, payload, label }) => {
+  const expressData = payload.find((item) => item.name === "Express");
+  if (active && payload && payload.length) {
+    return (
+      <div
+        className="custom-tooltip"
+        style={{
+          backgroundColor: "#fff",
+          padding: "10px",
+          border: "1px solid #ccc",
+        }}
+      >
+        <p
+          className="label font-bold text-center text-[1rem]"
+          style={{ color: "#000" }}
+        >{`Quartal: ${label}`}</p>
+        {payload.map((item) => (
+          <p key={item.name} style={{ color: item.fill }}>
+            {`${item.name}: $${item.value.toFixed(2)}`}
+          </p>
+        ))}
+        <br />
+        {console.log(expressData)}
+        {console.log(payload)}
+
+        {expressData && (
+          <>
+            <p style={{ color: expressData.payload.Express.category }}>
+              {`PercentageChange (Express): ${expressData.payload.Express.percentageChange}%`}
+            </p>
+          </>
+        )}
+      </div>
+    );
+  }
+  return null;
+};
+
 const CardShippingMethodSales = ({ data }) => {
   const [selectedYear, setSelectedYear] = useState(2024);
 
@@ -55,7 +93,7 @@ const CardShippingMethodSales = ({ data }) => {
   shippingMethodSalesAnalyze(chartData);
 
   return (
-    <div className="bg-card h-[35rem] shadow-md rounded-2xl relative w-full px-10 pt-10">
+    <div className="bg-card h-[35rem] shadow-md rounded-2xl relative w-full px-10 pt-10 mt-10">
       <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10">
         <div className="flex flex-col items-center">
           <h1 className="text-text text-center font-bold text-[1.5rem] lg:text-[2rem] pb-5 whitespace-nowrap">
@@ -79,13 +117,17 @@ const CardShippingMethodSales = ({ data }) => {
           width={500}
           height={300}
           data={chartData}
-          margin={{ top: 90, right: 30, left: 20, bottom: 15 }}
+          margin={{ top: 90, right: 30, left: 0, bottom: 15 }}
         >
           <XAxis dataKey="quartal" />
           <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="Express.value" fill="#8884d8">
+          <Tooltip content={<CustomTooltip />} />
+          <Legend
+            wrapperStyle={{
+              marginLeft: "20px",
+            }}
+          />
+          <Bar dataKey="Express.value" name="Express" fill="#8884d8">
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.Express.category} />
             ))}

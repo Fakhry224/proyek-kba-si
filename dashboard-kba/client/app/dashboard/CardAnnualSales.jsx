@@ -13,12 +13,43 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div
+        className="custom-tooltip"
+        style={{
+          backgroundColor: "#fff",
+          padding: "10px",
+          border: "1px solid #ccc",
+        }}
+      >
+        <p
+          className="label font-bold text-center text-[1rem]"
+          style={{ color: "#000" }}
+        >{`${label}`}</p>
+        ;
+        {payload.map((item) => (
+          <div key={item.name} style={{ marginBottom: "5px" }}>
+            <p style={{ color: "#000" }}>{`${item.name}: $${item.value}`}</p>
+            <p style={{ color: item.payload.category }}>
+              {`PercentageChange: ${item.payload.percentageChange}%`}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const CardAnnualSales = ({ data }) => {
   const analyzedData = annualSalesAnalyze(data);
   const maxRevenue = Math.max(...data.map((item) => item.total_revenue));
 
   return (
-    <div className="bg-card shadow-md rounded-2xl p-4 h-[35rem]">
+    <div className="bg-card shadow-md rounded-2xl p-4 h-[35rem] mt-10">
       <h1 className="text-text text-center font-bold text-[1.5rem] lg:text-[2rem] pt-2">
         Pendapatan Tahunan
       </h1>
@@ -27,15 +58,12 @@ const CardAnnualSales = ({ data }) => {
           width={500}
           height={300}
           data={analyzedData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 15 }}
+          margin={{ top: 90, right: 30, left: 20, bottom: 15 }}
         >
           <XAxis dataKey="year" />
-          <YAxis domain={[0, maxRevenue + 5000]} />
-          <Tooltip />
-          <Bar
-            dataKey="total_revenue"
-            activeBar={<Rectangle fill="pink" stroke="blue" />}
-          >
+          <YAxis domain={[0, maxRevenue + 2000]} />
+          <Tooltip content={<CustomTooltip />} />
+          <Bar dataKey="total_revenue" activeBar={<Rectangle stroke="blue" />}>
             {analyzedData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.category} />
             ))}

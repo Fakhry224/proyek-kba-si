@@ -30,13 +30,14 @@ export const asianCountries = [
 
 export const monthlySalesAnalyze = (data) => {
   const groupedData = data.reduce((acc, item) => {
-    const monthName = monthNames[item.month - 1];
-    if (!acc[monthName]) {
-      acc[monthName] = {};
+    const year = item.year;
+    const month = item.month;
+
+    if (!acc[year]) {
+      acc[year] = {};
     }
 
-    acc[monthName][item.year] = parseFloat(item.total_revenue);
-
+    acc[year][month] = parseFloat(item.total_revenue);
     return acc;
   }, {});
 
@@ -46,39 +47,33 @@ export const monthlySalesAnalyze = (data) => {
     return "#B8001F";
   };
 
-  const analyzedData = monthNames.map((month) => {
-    const monthlyData = groupedData[month] || {};
+  const analyzedData = monthNames.map((month, monthIndex) => {
+    const monthNumber = monthIndex + 1;
 
-    const percentageChange2021 = 0;
-    const percentageChange2022 = monthlyData[2021]
-      ? ((monthlyData[2022] - monthlyData[2021]) / monthlyData[2021]) * 100
-      : 0;
-    const percentageChange2023 = monthlyData[2022]
-      ? ((monthlyData[2023] - monthlyData[2022]) / monthlyData[2022]) * 100
-      : 0;
-    const percentageChange2024 = monthlyData[2023]
-      ? ((monthlyData[2024] - monthlyData[2023]) / monthlyData[2023]) * 100
-      : 0;
+    const percentageChanges = {};
+
+    for (let year = 2021; year <= 2024; year++) {
+      const currentMonthRevenue = groupedData[year]?.[monthNumber] || 0;
+      const previousMonthRevenue =
+        monthNumber > 1 ? groupedData[year]?.[monthNumber - 1] || 0 : 0;
+
+      let percentageChange = 0;
+
+      if (previousMonthRevenue !== 0) {
+        percentageChange =
+          ((currentMonthRevenue - previousMonthRevenue) /
+            previousMonthRevenue) *
+          100;
+      }
+
+      percentageChanges[`percentageChange${year}`] = {
+        value: percentageChange.toFixed(2),
+        color: getColor(percentageChange),
+      };
+    }
 
     return {
-      [month]: {
-        percentageChange2021: {
-          value: percentageChange2021.toFixed(2),
-          color: getColor(percentageChange2021),
-        },
-        percentageChange2022: {
-          value: percentageChange2022.toFixed(2),
-          color: getColor(percentageChange2022),
-        },
-        percentageChange2023: {
-          value: percentageChange2023.toFixed(2),
-          color: getColor(percentageChange2023),
-        },
-        percentageChange2024: {
-          value: percentageChange2024?.toFixed(2),
-          color: getColor(percentageChange2024),
-        },
-      },
+      [month]: percentageChanges,
     };
   });
 

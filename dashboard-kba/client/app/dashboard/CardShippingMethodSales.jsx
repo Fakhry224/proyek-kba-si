@@ -36,8 +36,8 @@ const CustomTooltip = ({ active, payload, label }) => {
           </p>
         ))}
         <br />
-        {console.log(expressData)}
-        {console.log(payload)}
+        {/* {console.log(expressData)}
+        {console.log(payload)} */}
 
         {expressData && (
           <>
